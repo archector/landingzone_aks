@@ -36,7 +36,7 @@ jobs:
 
   tfsec:
     name: Run TFsec
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -47,7 +47,7 @@ jobs:
 
   checkov:
     name: checkov-action
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - name: Checkout repo
         uses: actions/checkout@master
@@ -60,7 +60,7 @@ jobs:
 
   foundations:
     name: foundations
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     container:
       image: aztfmod/rover:2011.3012
@@ -104,7 +104,7 @@ jobs:
 
   shared_services:
     name: shared_services
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: foundations
 
@@ -140,7 +140,7 @@ jobs:
 
   networking_hub:
     name: networking_hub
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: foundations
 
@@ -176,7 +176,7 @@ jobs:
 
   networking_spoke:
     name: networking_spoke
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: [foundations, networking_hub]
 
@@ -212,7 +212,7 @@ jobs:
 
   aks_clusters:
     name: aks_clusters
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: [networking_hub, networking_spoke, shared_services]
 
@@ -221,9 +221,7 @@ jobs:
       max-parallel: 3
       matrix:
           example: [
-            "101-single-cluster",
-            "102-multi-nodepools",
-            "103-multi-clusters",
+            "101-single-cluster"
           ]
 
     container:
@@ -267,7 +265,7 @@ jobs:
 
   blue_green_nodepool_cluster:
     name: blue_green_nodepool_cluster
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
 
     needs: [aks_clusters]
 
@@ -301,7 +299,7 @@ jobs:
             -var-file ${GITHUB_WORKSPACE}/examples/aks/${{ env.example }}/aks_step0.tfvars \
             '-var tags={testing_job_id="${{ github.run_id }}"}' \
             --environment ${{ github.run_id }}
-            
+
       - name: deploy aks_cluster step1
         run: |
           /tf/rover/rover.sh -lz ${GITHUB_WORKSPACE} -a apply \
@@ -352,7 +350,7 @@ jobs:
 
   private_cluster:
     name: private_cluster
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: always()
 
     needs: [blue_green_nodepool_cluster]
@@ -420,7 +418,7 @@ jobs:
 
   destroy_networking_spoke:
     name: destroy_networking_spoke
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: always()
 
     needs: [aks_clusters, private_cluster]
@@ -458,7 +456,7 @@ jobs:
 
   destroy_shared_services:
     name: destroy_shared_services
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: always()
 
     needs: [aks_clusters, private_cluster]
@@ -496,7 +494,7 @@ jobs:
 
   destroy_networking_hub:
     name: destroy_networking_hub
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: always()
 
     needs: [destroy_networking_spoke]
@@ -534,7 +532,7 @@ jobs:
 
   destroy_foundations:
     name: destroy_foundations
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     if: always()
     needs: [destroy_shared_services, destroy_networking_hub]
 

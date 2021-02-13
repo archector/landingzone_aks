@@ -14,8 +14,8 @@ enable = {
 default_region = "region1"
 
 regions = {
-  region1 = "southeastasia"
-  region2 = "eastasia"
+  region1 = "westeurope"
+  region2 = "northeurope"
 }
 
 launchpad_key_names = {

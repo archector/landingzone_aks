@@ -43,10 +43,10 @@ diagnostics_destinations = {
   # Storage keys must reference the azure region name
   storage = {
     all_regions = {
-      southeastasia = {
+      westeurope = {
         storage_account_key = "diagsiem_region1"
       }
-      eastasia = {
+      northeurope = {
         storage_account_key = "diagsiem_region2"
       }
     }
